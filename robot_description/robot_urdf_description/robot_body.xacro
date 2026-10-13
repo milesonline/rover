@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<robot name="mars_rover"
+       xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="chassis.xacro"/>
+    <xacro:include filename="wheels.xacro"/>
+    <xacro:include filename="sensors.xacro"/>
+
+</robot>
