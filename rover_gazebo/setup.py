@@ -14,6 +14,8 @@ setup(
             ['launch/simulation.launch.py']),
         ('share/' + package_name + '/worlds',
             ['worlds/planet.world']),
+        ('share/' + package_name + '/config',
+         ['config/controllers.yaml']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

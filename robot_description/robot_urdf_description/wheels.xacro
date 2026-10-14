@@ -57,12 +57,12 @@
                 <mass value="${wheel_mass}"/>
 
                 <inertia
-                    ixx="0.1"
+                    ixx="0.035"
                     ixy="0.0"
                     ixz="0.0"
-                    iyy="0.1"
+                    iyy="0.0625"
                     iyz="0.0"
-                    izz="0.1"/>
+                    izz="0.035"/>
 
             </inertial>
 

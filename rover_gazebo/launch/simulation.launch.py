@@ -8,6 +8,8 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import PathJoinSubstitution, Command
 from launch_ros.parameter_descriptions import ParameterValue
+from launch.actions import RegisterEventHandler
+from launch.event_handlers import OnProcessExit
 
 
 def generate_launch_description():
@@ -83,6 +85,41 @@ def generate_launch_description():
         output='screen'
     )
 
+    # blah
+    #spawn joint state and driver controllers
+
+    joint_state_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'joint_state_broadcaster',
+            '--controller-manager',
+            '/controller_manager',
+        ],
+        output='screen',
+    )
+
+    drive_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'drive_controller',
+            '--controller-manager',
+            '/controller_manager',
+        ],
+        output='screen',
+    )
+
+    start_controllers = RegisterEventHandler(
+        OnProcessExit(
+            target_action=spawn_rover,
+            on_exit=[
+                joint_state_spawner,
+                drive_controller_spawner,
+            ],
+        )
+    )
+
 
     return LaunchDescription([
 
@@ -90,6 +127,8 @@ def generate_launch_description():
 
         robot_state_publisher,
 
-        spawn_rover
+        spawn_rover,
+
+        start_controllers,
 
     ])
