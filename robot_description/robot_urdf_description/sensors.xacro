@@ -2,27 +2,56 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:property name="sensor_mass" value="1.0"/>
+    <!-- ================================================= -->
+    <!-- SENSOR PROPERTIES                                 -->
+    <!-- ================================================= -->
+
+    <xacro:property name="mast_mass" value="1.0"/>
+    <xacro:property name="head_mass" value="1.5"/>
+
+
+    <!-- ================================================= -->
+    <!-- SENSOR MAST                                       -->
+    <!-- ================================================= -->
 
     <link name="sensor_mast">
 
         <visual>
-            <origin xyz="0 0 0.25"/>
+
+            <origin xyz="0 0 0.30"/>
+
             <geometry>
-                <cylinder radius="0.08" length="0.5"/>
+                <cylinder
+                    radius="0.07"
+                    length="0.60"/>
             </geometry>
+
+            <material name="mast_material">
+                <color rgba="0.12 0.13 0.14 1"/>
+            </material>
+
         </visual>
 
+
         <collision>
-            <origin xyz="0 0 0.25"/>
+
+            <origin xyz="0 0 0.30"/>
+
             <geometry>
-                <cylinder radius="0.08" length="0.5"/>
+                <cylinder
+                    radius="0.07"
+                    length="0.60"/>
             </geometry>
+
         </collision>
 
+
         <inertial>
-            <origin xyz="0 0 0.25"/>
-            <mass value="${sensor_mass}"/>
+
+            <origin xyz="0 0 0.30"/>
+
+            <mass value="${mast_mass}"/>
+
             <inertia
                 ixx="0.02"
                 ixy="0.0"
@@ -30,16 +59,281 @@
                 iyy="0.02"
                 iyz="0.0"
                 izz="0.02"/>
+
         </inertial>
 
     </link>
+
 
     <joint name="sensor_mast_joint" type="fixed">
 
         <parent link="base_link"/>
         <child link="sensor_mast"/>
 
-        <origin xyz="0 0 0.15"/>
+        <origin
+            xyz="0 0 0.50"
+            rpy="0 0 0"/>
+
+    </joint>
+
+
+    <!-- ================================================= -->
+    <!-- MAIN SENSOR HEAD                                  -->
+    <!-- ================================================= -->
+
+    <link name="sensor_head">
+
+        <visual>
+
+            <geometry>
+                <box size="0.45 0.30 0.20"/>
+            </geometry>
+
+            <material name="sensor_head_material">
+                <color rgba="0.16 0.17 0.18 1"/>
+            </material>
+
+        </visual>
+
+
+        <collision>
+
+            <geometry>
+                <box size="0.45 0.30 0.20"/>
+            </geometry>
+
+        </collision>
+
+
+        <inertial>
+
+            <mass value="${head_mass}"/>
+
+            <inertia
+                ixx="0.03"
+                ixy="0.0"
+                ixz="0.0"
+                iyy="0.03"
+                iyz="0.0"
+                izz="0.03"/>
+
+        </inertial>
+
+    </link>
+
+
+    <joint name="sensor_head_joint" type="fixed">
+
+        <parent link="sensor_mast"/>
+        <child link="sensor_head"/>
+
+        <origin
+            xyz="0 0 0.65"
+            rpy="0 0 0"/>
+
+    </joint>
+
+
+    <!-- ================================================= -->
+    <!-- LEFT CAMERA HOUSING                               -->
+    <!-- ================================================= -->
+
+    <link name="left_camera">
+
+        <visual>
+
+            <origin xyz="0 0 0"/>
+
+            <geometry>
+                <box size="0.12 0.10 0.10"/>
+            </geometry>
+
+            <material name="camera_housing_material">
+                <color rgba="0.08 0.09 0.10 1"/>
+            </material>
+
+        </visual>
+
+    </link>
+
+
+    <joint name="left_camera_joint" type="fixed">
+
+        <parent link="sensor_head"/>
+        <child link="left_camera"/>
+
+        <origin
+            xyz="0.235 0.085 0.025"
+            rpy="0 0 0"/>
+
+    </joint>
+
+
+    <!-- Left camera lens -->
+
+    <link name="left_camera_lens">
+
+        <visual>
+
+            <origin xyz="0 0 0"/>
+
+            <geometry>
+                <cylinder
+                    radius="0.035"
+                    length="0.025"/>
+            </geometry>
+
+            <material name="lens_material">
+                <color rgba="0.02 0.05 0.08 1"/>
+            </material>
+
+        </visual>
+
+    </link>
+
+
+    <joint name="left_camera_lens_joint" type="fixed">
+
+        <parent link="left_camera"/>
+        <child link="left_camera_lens"/>
+
+        <origin
+            xyz="0.065 0 0"
+            rpy="0 1.5708 0"/>
+
+    </joint>
+
+
+    <!-- ================================================= -->
+    <!-- RIGHT CAMERA HOUSING                              -->
+    <!-- ================================================= -->
+
+    <link name="right_camera">
+
+        <visual>
+
+            <geometry>
+                <box size="0.12 0.10 0.10"/>
+            </geometry>
+
+            <material name="camera_housing_material"/>
+
+        </visual>
+
+    </link>
+
+
+    <joint name="right_camera_joint" type="fixed">
+
+        <parent link="sensor_head"/>
+        <child link="right_camera"/>
+
+        <origin
+            xyz="0.235 -0.085 0.025"
+            rpy="0 0 0"/>
+
+    </joint>
+
+
+    <!-- Right camera lens -->
+
+    <link name="right_camera_lens">
+
+        <visual>
+
+            <geometry>
+                <cylinder
+                    radius="0.035"
+                    length="0.025"/>
+            </geometry>
+
+            <material name="lens_material"/>
+
+        </visual>
+
+    </link>
+
+
+    <joint name="right_camera_lens_joint" type="fixed">
+
+        <parent link="right_camera"/>
+        <child link="right_camera_lens"/>
+
+        <origin
+            xyz="0.065 0 0"
+            rpy="0 1.5708 0"/>
+
+    </joint>
+
+
+    <!-- ================================================= -->
+    <!-- CENTRAL RANGE SENSOR                               -->
+    <!-- ================================================= -->
+
+    <link name="range_sensor">
+
+        <visual>
+
+            <origin xyz="0 0 0"/>
+
+            <geometry>
+                <cylinder
+                    radius="0.055"
+                    length="0.04"/>
+            </geometry>
+
+            <material name="range_sensor_material">
+                <color rgba="0.03 0.04 0.05 1"/>
+            </material>
+
+        </visual>
+
+    </link>
+
+
+    <joint name="range_sensor_joint" type="fixed">
+
+        <parent link="sensor_head"/>
+        <child link="range_sensor"/>
+
+        <origin
+            xyz="0.235 0 -0.055"
+            rpy="0 1.5708 0"/>
+
+    </joint>
+
+
+    <!-- ================================================= -->
+    <!-- TOP SENSOR                                         -->
+    <!-- ================================================= -->
+
+    <link name="top_sensor">
+
+        <visual>
+
+            <geometry>
+                <cylinder
+                    radius="0.06"
+                    length="0.08"/>
+            </geometry>
+
+            <material name="top_sensor_material">
+                <color rgba="0.25 0.26 0.27 1"/>
+            </material>
+
+        </visual>
+
+    </link>
+
+
+    <joint name="top_sensor_joint" type="fixed">
+
+        <parent link="sensor_head"/>
+        <child link="top_sensor"/>
+
+        <origin
+            xyz="-0.05 0 0.14"
+            rpy="0 0 0"/>
 
     </joint>
 

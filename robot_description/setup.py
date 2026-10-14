@@ -18,6 +18,9 @@ setup(
              'robot_urdf_description/chassis.xacro',
              'robot_urdf_description/wheels.xacro',
              'robot_urdf_description/sensors.xacro',
+             'robot_urdf_description/solar_panel.xacro',
+             'robot_urdf_description/details.xacro',
+
          ]),
     ],
     install_requires=['setuptools'],

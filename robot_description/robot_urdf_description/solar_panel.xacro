@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="panel_length" value="1.0"/>
+    <xacro:property name="panel_width" value="0.75"/>
+    <xacro:property name="panel_thickness" value="0.05"/>
+
+    <!-- Main panel -->
+    <link name="solar_panel">
+
+        <!-- Panel backing -->
+        <visual>
+            <geometry>
+                <box size="${panel_length} ${panel_width} ${panel_thickness}"/>
+            </geometry>
+
+            <material name="panel_backing">
+                <color rgba="0.08 0.09 0.10 1"/>
+            </material>
+        </visual>
+
+        <!-- Outer frame -->
+        <visual>
+            <origin xyz="0 0 0.031"/>
+            <geometry>
+                <box size="1.04 0.04 0.025"/>
+            </geometry>
+
+            <material name="panel_frame">
+                <color rgba="0.35 0.37 0.39 1"/>
+            </material>
+        </visual>
+
+        <visual>
+            <origin xyz="0 0.355 0.031"/>
+            <geometry>
+                <box size="1.04 0.04 0.025"/>
+            </geometry>
+
+            <material name="panel_frame"/>
+        </visual>
+
+        <visual>
+            <origin xyz="-0.48 0 0.031"/>
+            <geometry>
+                <box size="0.04 0.75 0.025"/>
+            </geometry>
+
+            <material name="panel_frame"/>
+        </visual>
+
+        <visual>
+            <origin xyz="0.48 0 0.031"/>
+            <geometry>
+                <box size="0.04 0.75 0.025"/>
+            </geometry>
+
+            <material name="panel_frame"/>
+        </visual>
+
+
+        <!-- Solar cells -->
+        <xacro:macro name="solar_cell" params="x y">
+
+            <visual>
+                <origin xyz="${x} ${y} 0.030"/>
+                <geometry>
+                    <box size="0.21 0.20 0.012"/>
+                </geometry>
+
+                <material name="solar_cell_material">
+                    <color rgba="0.03 0.10 0.22 1"/>
+                </material>
+            </visual>
+
+        </xacro:macro>
+
+
+        <!-- 4 x 3 cell array -->
+        <xacro:solar_cell x="-0.35" y="-0.25"/>
+        <xacro:solar_cell x="-0.115" y="-0.25"/>
+        <xacro:solar_cell x="0.115" y="-0.25"/>
+        <xacro:solar_cell x="0.35" y="-0.25"/>
+
+        <xacro:solar_cell x="-0.35" y="0"/>
+        <xacro:solar_cell x="-0.115" y="0"/>
+        <xacro:solar_cell x="0.115" y="0"/>
+        <xacro:solar_cell x="0.35" y="0"/>
+
+        <xacro:solar_cell x="-0.35" y="0.25"/>
+        <xacro:solar_cell x="-0.115" y="0.25"/>
+        <xacro:solar_cell x="0.115" y="0.25"/>
+        <xacro:solar_cell x="0.35" y="0.25"/>
+
+
+        <!-- Single collision for the entire panel -->
+        <collision>
+            <geometry>
+                <box size="${panel_length} ${panel_width} ${panel_thickness}"/>
+            </geometry>
+        </collision>
+
+
+        <inertial>
+            <mass value="1.5"/>
+            <inertia
+                ixx="0.1"
+                ixy="0.0"
+                ixz="0.0"
+                iyy="0.1"
+                iyz="0.0"
+                izz="0.1"/>
+        </inertial>
+
+    </link>
+
+
+    <joint name="solar_panel_joint" type="fixed">
+
+        <parent link="base_link"/>
+        <child link="solar_panel"/>
+
+        <origin
+            xyz="-0.30 0 0.72"
+            rpy="0 0.12 0"/>
+
+    </joint>
+
+</robot>
