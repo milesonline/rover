@@ -65,7 +65,8 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[
-            {'robot_description': robot_description}
+            {'robot_description': robot_description},
+            {'use_sim_time': True}
         ]
     )
 
@@ -127,6 +128,28 @@ def generate_launch_description():
         output='screen',
     )
 
+    lidar_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/lidar/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
+        ],
+        output='screen',
+    )
+
+    lidar_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        arguments=[
+            '--x', '0',
+            '--y', '0',
+            '--z', '0',
+            '--frame-id', 'lidar_link',
+            '--child-frame-id', 'rover/base_link/rover_lidar'
+        ],
+        output='screen'
+    )
+
 
     return LaunchDescription([
 
@@ -139,5 +162,9 @@ def generate_launch_description():
         start_controllers,
 
         clock_bridge,
+
+        lidar_bridge,
+
+        lidar_tf,
 
     ])
