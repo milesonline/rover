@@ -1,7 +1,7 @@
 import rclpy
+import math
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
-import time
 
 class LidarProcessor(Node):
 
@@ -25,18 +25,59 @@ class LidarProcessor(Node):
             10
         )
 
-        # Publisher for Object detections
-        self.detections_pub = self.create_publisher(
-            LaserScan,
-            '/rover_sensors/detections',
-            10
-        )
-
-        self.get_logger().info(f"lidar detection node listening: {scan_topic}")
-        self.get_logger().info(f"Publishing detections on: /rover_sensors/detections")
 
     def scan_callback(self, msg: LaserScan):
         """
         Called every time a scan comes in
         """
-        pass   
+        # get LiDAR measurements
+        ranges = msg.ranges
+
+
+        nearest_obstacle= float('inf')
+        nearest_index = -1
+        #Set obstacle threshold
+        obstacle_threshold = 2.0
+
+        for index, num in enumerate(ranges):
+            #Ignore invalid measurements
+            if math.isfinite(num) and msg.range_min <= num <= msg.range_max:
+                if num < nearest_obstacle:
+                    nearest_obstacle = num
+                    nearest_index = index
+
+        #process result after checking the whole scan
+        if nearest_index != -1:
+            # Calculate the angle in radians
+            angle = msg.angle_min + (nearest_index * msg.angle_increment)
+            # Convert radians to degrees
+            angle_degrees = math.degrees(angle)
+
+            # Report the nearest return
+            self.get_logger().info(
+                f'Nearest return: {nearest_obstacle:.2f} metres '
+                f'at index {nearest_index}, '
+                f'angle {angle_degrees: .1f} degrees'
+            )
+
+            #warn if return is within the threshold
+            if nearest_obstacle < obstacle_threshold:
+                self.get_logger().warn(
+                    f'Nearest return within threshold: '
+                    f'{nearest_obstacle:.2f} metres'
+                )
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = LidarProcessor()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()
